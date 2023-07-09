@@ -2,7 +2,7 @@
 import { IIssueData } from '@/Interface/ReportIinterface';
 import Navbar from '@/components/Navbar'
 import ReportIssueCard from '@/components/Problem/ReportIssueCard';
-import { getAllIssue } from '@/functions/issues/getAllIssue';
+import { fetchAllIssue } from '@/functions/issueReport.tsx/fetchAllIssue';
 import React, { useEffect } from 'react'
 
 
@@ -18,7 +18,7 @@ const Issues = () => {
 
   const handleGetAllIssues = async () => {
     try {
-      const res = await getAllIssue()
+      const res = await fetchAllIssue()
       setIssues(res)
       console.log(res)
     } catch (err: any) {
