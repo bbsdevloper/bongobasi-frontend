@@ -8,6 +8,7 @@ import { IIssueData } from '@/Interface/ReportIinterface'
 import { addnewIssue } from '@/functions/issueReport.tsx/addNewIssue'
 import Map from 'react-map-gl';
 import getSearchedPLaces from '@/functions/getSearchedPlaces'
+import { useUser } from '@/context/userContext'
 
 const reportIssuePage = () => {
     const [reportData, setReportData] = useState<Partial<IIssueData>>({
@@ -16,11 +17,15 @@ const reportIssuePage = () => {
         issuetype: "",
         issuelevel: "low",
         issuemedia: [],
-        issuelocation: "",
+        issuelocation:{
+            lat:0,
+            long:0
+        },
         issuecomments: [],
-        issuedate: NaN,
+        issuedate: '',
         issueRaiser: ""
     })
+    const {user} = useUser()
     const [searchedLocation, setSearchedLocation] = useState<{ lat: number, long: number }>({
         lat: 22.5726,
         long: 88.3639
@@ -45,10 +50,10 @@ const reportIssuePage = () => {
             issuelocation: "",
             issuecomments: [],
             issuedate: Date.now(),
-            issueRaiser: ""
+            issueRaiser: user?.UserId
         }
 
-        await addnewIssue(data as IIssueData)
+        await addnewIssue(data as any)
     }
 
     const getPlaces = async (location: string) => {
@@ -169,7 +174,7 @@ const reportIssuePage = () => {
                                 placeholder="Search Your Location"
                                 size={'md'}
                                 fontSize="base"
-                                value={reportData.issuelocation}
+                                // value={reportData.issuelocation}
                                 onChange={(e) => {
                                     setReportData((prev: any) => {
                                         return {

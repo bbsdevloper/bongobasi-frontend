@@ -22,7 +22,9 @@ const Navbar = () => {
                     </Link>
                 </ul>
                 <ul className='cursor-pointer hover:scale-105 transition-all duration-150'>
-                    Dashboard
+                    <Link href={'/issues'}>
+                        All Issues
+                    </Link>
                 </ul>
                 <ul className='cursor-pointer hover:scale-105 transition-all duration-150' onClick={() => router.push('/report-issue')}>
                     Issue Report
