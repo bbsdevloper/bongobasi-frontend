@@ -1,5 +1,3 @@
-
-
 export interface ICommentData {
     body: string,
     commenttype: "officer" | "citizen",
@@ -16,11 +14,8 @@ export interface IIssueData {
     issuelocation: IIssueLocation;
     issuecomments?: ICommentData[]
     issuedate: string,
-    issueRaiser: string,
-    issueRaiserName?: string,
-    issueraiserid: string
+    issueraiserdetails: IIssueRaiserDetails;
     issueprogress?: string
-    issueimages: string[]
     _id: string
 }
 
@@ -28,4 +23,12 @@ export interface IIssueLocation{
     localAddress:string,
     district:string,
     subDivision:string,
+}
+
+export interface IIssueRaiserDetails{
+    issueraisername:string,
+    issueraiserid: string,
+    issueraisermail:string,
+    issueraiserphone:string,
+    issueraiserprofilephoto:string,
 }

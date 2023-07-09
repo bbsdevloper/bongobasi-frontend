@@ -26,12 +26,7 @@ const IssueReported = () => {
                         return (
                             <ReportIssueCard
                                 key={i}
-                                title={issue.issuetitle}
-                                date={issue.issuedate}
-                                level={issue.issuelevel}
-                                description={issue.issuedescription}
-                                location={issue.issuelocation}
-                                progress={issue.issueprogress}
+                                data={issue}
                             />
                         )
                     })

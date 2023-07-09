@@ -1,12 +1,11 @@
-import jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken'
 
-export const decodeJWT = (jwtToken:string) => {
+export const decodeJWT = (jwtToken: string) => {
     try {
-        const decodedToken = jwt.decode(jwtToken);
+        const decodedToken = jwt.decode(jwtToken)
 
         return decodedToken?.sub
-
     } catch (error: any) {
-        console.error('Error decoding JWT token:', error.message);
+        console.error('Error decoding JWT token:', error.message)
     }
 }

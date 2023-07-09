@@ -5,7 +5,7 @@ export async function checkUser(mobileNumber: string) {
     
     try {
         const res = await axios.post(`${baseUrl}/api/checkUser`, {
-            user_phone: `+91${mobileNumber}`,
+            userphone: `+91${mobileNumber}`,
         })
         return res.data
     } catch (err: any) {
