@@ -8,7 +8,7 @@ import React, { useEffect } from 'react'
 import { AiFillThunderbolt, AiOutlineThunderbolt, AiOutlineUser } from 'react-icons/ai'
 import { FaUser } from 'react-icons/fa'
 
-const user = () => {
+const User = () => {
     const searchParams = useSearchParams()
     const router = useRouter()
     const currentTab = searchParams.get('currentTab')
@@ -40,4 +40,4 @@ const user = () => {
     )
 }
 
-export default user
+export default User
