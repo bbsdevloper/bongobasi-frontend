@@ -6,7 +6,6 @@ import { fetchAllIssue } from '@/functions/issueReport.tsx/fetchAllIssue';
 import React, { useEffect } from 'react'
 
 
-
 const Issues = () => {
 
   const [issues, setIssues] = React.useState<IIssueData[]>([])

@@ -1,14 +1,16 @@
 'use client'
 
 import Navbar from '@/components/Navbar'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Input, Radio, RadioGroup, Select, Stack, Textarea } from '../lib/chakraui'
-import { IoIosAdd } from 'react-icons/io'
-import { IIssueData } from '@/Interface/ReportIinterface'
+import { IIssueData, IIssueLocation } from '@/Interface/ReportIinterface'
 import { addnewIssue } from '@/functions/issueReport.tsx/addNewIssue'
 import Map from 'react-map-gl';
 import getSearchedPLaces from '@/functions/getSearchedPlaces'
 import { useUser } from '@/context/userContext'
+import { AiOutlineClose } from 'react-icons/ai'
+import districtDivision from '@/data/districtDivision'
+import { uploadImagetoAWS } from '@/functions/uploadImagetoAWS'
 
 const reportIssuePage = () => {
     const [reportData, setReportData] = useState<Partial<IIssueData>>({
@@ -17,20 +19,34 @@ const reportIssuePage = () => {
         issuetype: "",
         issuelevel: "low",
         issuemedia: [],
-        issuelocation:{
-            lat:0,
-            long:0
+        issuelocation: {
+            localAddress: '',
+            district: '',
+            subDivision: ''
+
         },
         issuecomments: [],
         issuedate: '',
         issueRaiser: ""
     })
-    const {user} = useUser()
+    const [_selectedDistrictSubdivision, setSelectedSubDivisions] = useState([''])
+    const { user } = useUser()
     const [searchedLocation, setSearchedLocation] = useState<{ lat: number, long: number }>({
         lat: 22.5726,
         long: 88.3639
     })
-    const [searchedLocationData, setSearchedLocationData] = useState<any>([])
+    const [media, setMedia] = useState<any[]>([''])
+
+    useEffect(() => {
+
+        if (reportData.issuelocation?.district !== '') {
+
+            const districtIndex = districtDivision.findIndex((data) => data.district === reportData.issuelocation?.district)
+            setSelectedSubDivisions(districtDivision[districtIndex].subdivisions)
+
+        }
+    }, [reportData.issuelocation?.district])
+
 
     const validateForm = () => {
         if (reportData.issuetitle !== "" && reportData.issuedescription !== undefined && reportData.issuetype !== "" && reportData.issuelevel !== undefined) {
@@ -38,34 +54,56 @@ const reportIssuePage = () => {
         } else {
             return true
         }
+
     }
 
+    const handleAddMediatoS3 = async () => {
+        let _uploadedMediaLink: string[] = [];
+        media?.forEach(async (img) => {
+            let _link = await uploadImagetoAWS(img)
+            console.log(_link);
+            _uploadedMediaLink.push(_link)
+        })
+        console.log(_uploadedMediaLink as string[]);
+        return _uploadedMediaLink
+    }    
+
     const handleSubmitReport = async () => {
+        const uploadedMedia = await handleAddMediatoS3()
         const data = {
             issuetitle: reportData.issuetitle,
             issuedescription: reportData.issuedescription,
             issuetype: reportData.issuetype,
             issuelevel: reportData.issuelevel,
-            issuemedia: [],
-            issuelocation: "",
+            issuemedia: uploadedMedia,
+            issuelocation: reportData.issuelocation,
             issuecomments: [],
             issuedate: Date.now(),
             issueRaiser: user?.UserId
         }
 
-        await addnewIssue(data as any)
+        console.log(data);
+        
+
+        // await addnewIssue(data as any)
     }
 
     const getPlaces = async (location: string) => {
         const data = await getSearchedPLaces(location)
-        data && setSearchedLocationData(data)
+
+        data.features && setSearchedLocation({
+            lat: data.features[0].center[1],
+            long: data.features[0].center[0]
+        })
     }
+
+
     return (
         <div className='bg-blueBackground pb-6'>
             <Navbar />
             <div className='bg-white mx-8 my-8 rounded-lg p-8 shadow-xl'>
                 <h1 className='text-2xl font-semibold mb-6'>Report New Issue</h1>
-                <div className='space-y-6'>
+                <div className='space-y-6 mb-4'>
                     <section>
                         <h2 className='text-xl mb-2'>Title*</h2>
                         <Input
@@ -79,7 +117,7 @@ const reportIssuePage = () => {
                             onChange={(e) => setReportData((prev: any) => {
                                 return {
                                     ...prev,
-                                    title: e.target.value
+                                    issuetitle: e.target.value
                                 }
                             })}
                         />
@@ -95,7 +133,7 @@ const reportIssuePage = () => {
                             onChange={(e) => setReportData((prev: any) => {
                                 return {
                                     ...prev,
-                                    type: e.target.value
+                                    issuetype: e.target.value
                                 }
                             })}
                             fontSize="base">
@@ -136,7 +174,7 @@ const reportIssuePage = () => {
                         <RadioGroup value={reportData.issuelevel} onChange={(e) => setReportData((prev: any) => {
                             return {
                                 ...prev,
-                                level: e
+                                issuelevel: e
                             }
                         })}>
 
@@ -159,50 +197,96 @@ const reportIssuePage = () => {
                             onChange={(e) => setReportData((prev: any) => {
                                 return {
                                     ...prev,
-                                    description: e.target.value
+                                    issuedescription: e.target.value
                                 }
                             })}
                         />
                     </section>
                     <section className='space-y-2'>
                         <h2 className='text-xl'>Location*</h2>
+                        <div className='flex justify-between items-center gap-8'>
+                            <section className='w-full'>
+                                <h2 className='text-lg mb-2'>District</h2>
+                                <Select
+                                    backgroundColor={'#FBFAFF'}
+                                    placeholder='--select--'
+                                    focusBorderColor="#1A75FF"
+                                    size={'md'}
+                                    value={reportData.issuelocation?.district}
+                                    onChange={(e) => setReportData({
+                                        ...reportData,
+                                        issuelocation: {
+                                            ...(reportData.issuelocation as IIssueLocation),
+                                            district: e.target.value
+                                        }
+
+                                    })}
+                                    fontSize="base">
+                                    {
+                                        districtDivision.map((data, i) => {
+                                            return (
+                                                <option key={i}>
+                                                    {
+                                                        data.district
+                                                    }
+                                                </option>
+                                            )
+                                        })
+                                    }
+                                </Select>
+                            </section>
+                            <section className='w-full'>
+                                <h2 className='text-lg mb-2'>Sub Division</h2>
+                                <Select
+                                    disabled={!reportData.issuelocation?.district}
+                                    backgroundColor={'#FBFAFF'}
+                                    placeholder='--select--'
+                                    focusBorderColor="#1A75FF"
+                                    size={'md'}
+                                    value={reportData.issuelocation?.subDivision}
+                                    onChange={(e) => {
+                                        setReportData({
+                                            ...reportData,
+                                            issuelocation: {
+                                                ...(reportData.issuelocation as IIssueLocation),
+                                                subDivision: e.target.value
+                                            }
+
+                                        })
+                                        getPlaces(e.target.value)
+                                    }}
+                                    fontSize="base">
+                                    {
+                                        _selectedDistrictSubdivision.map((data: any, i) => {
+                                            return (
+                                                <option key={i}>
+                                                    {data}
+                                                </option>
+                                            )
+                                        })
+                                    }
+                                </Select>
+                            </section>
+
+                        </div>
                         <section className='w-full space-y-2 relative'>
-                            <Input
-                                type="text"
+                            <Textarea
                                 backgroundColor={'#FBFAFF'}
                                 focusBorderColor="#1A75FF"
-                                placeholder="Search Your Location"
+                                placeholder="Enter your location in details"
                                 size={'md'}
                                 fontSize="base"
-                                // value={reportData.issuelocation}
-                                onChange={(e) => {
-                                    setReportData((prev: any) => {
-                                        return {
-                                            ...prev,
-                                            location: e.target.value
-                                        }
-                                    })
-                                    getPlaces(e.target.value)
-                                }}
+                                value={reportData.issuelocation?.localAddress}
+                                onChange={(e) => setReportData({
+                                    ...reportData,
+                                    issuelocation: {
+                                        ...(reportData.issuelocation as IIssueLocation),
+                                        localAddress: e.target.value
+                                    }
+
+                                })}
                             />
-                            <div className='w-full py-2 rounded-md absolute top-7 left-0 z-10'>
-                                {
-                                    searchedLocationData.features?.map((loc: any, i: number) => {
-                                        return <div key={i} className='bg-[#FBFAFF] px-4 py-2 cursor-pointer hover:bg-[#c1c0c5] rounded-md' onClick={() => {
-                                            setSearchedLocationData([])
-                                            setSearchedLocation({ lat: loc.center[1], long: loc.center[0] })
-                                            setReportData((prev: any) => {
-                                                return {
-                                                    ...prev,
-                                                    location: loc.place_name
-                                                }
-                                            })
-                                        }}>{loc.place_name}</div>
-                                    })
-                                }
-                            </div>
                         </section>
-                        {/* Map integration */}
                         <Map
                             latitude={searchedLocation.lat}
                             longitude={searchedLocation.long}
@@ -224,17 +308,46 @@ const reportIssuePage = () => {
                     <section>
                         <h2 className='text-xl mb-1'>Add Media</h2>
                         <p className='text-sm font-light text-lightTextColor mb-2'>Add media supporting the issue if possible. Media must be less than 5MB</p>
-                        <div className='flex justify-start space-x-4'>
-                            <div className='w-[10rem] min-h-[15rem] bg-[#FBFAFF] border-2 border-dashed rounded-md flex justify-center items-center'>
-                                <IoIosAdd size={'50'} cursor={'pointer'} />
-                            </div>
-                            <div className='w-[10rem] min-h-[15rem] bg-[#FBFAFF] border-2 border-dashed rounded-md flex justify-center items-center'>
-                                <IoIosAdd size={'50'} cursor={'pointer'} />
-                            </div>
-                            <div className='w-[10rem] min-h-[15rem] bg-[#FBFAFF] border-2 border-dashed rounded-md flex justify-center items-center'>
-                                <IoIosAdd size={'50'} cursor={'pointer'} />
-                            </div>
+                        <div className='space-y-2'>
+                            {
+                                media.map((data, i: number) => {
+                                    return (<div className='flex justify-between gap-4 items-center' key={i}>
+                                        <Input
+                                            type='file'
+                                            backgroundColor={'#FBFAFF'}
+                                            focusBorderColor="#1A75FF"
+                                            placeholder="Search Your Location"
+                                            size={'md'}
+                                            onChange={(e) =>{
+                                                if (e.target.files && e.target.files[0]) { 
+                                                    media[i] = e.target.files[0]                                                
+                                                    setMedia(media)
+                                                }
+    
+                                            }}
+                                            fontSize="base" />
+                                        {
+                                            i > 0 && <AiOutlineClose size={30} cursor={'pointer'} onClick={() => {
+                                                let _media = [...media]
+                                                _media.splice(i, 1)
+                                                setMedia(_media)
+                                            }} />
+                                        }
+
+                                    </div>
+                                    )
+                                })
+                            }
                         </div>
+                        {
+                            media.length <= 3 && <button className='flex gap-2 justify-start items-center btn-secondary px-2 text-sm py-1.5 mt-3' onClick={() => {
+                                let _media = [...media]
+                                _media.push('')
+                                setMedia(_media)
+                            }}>
+                                Add More
+                            </button>
+                        }
 
                     </section>
                 </div>
