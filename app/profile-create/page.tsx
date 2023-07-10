@@ -20,7 +20,7 @@ const CreateProfile = () => {
     UserVerified: false,
     UserIdProof: "",
   });
-  const jwtToken = window !== undefined ?  window.sessionStorage.getItem("jwtToken") : ""  ;
+  const jwtToken = window !== undefined ?  window.sessionStorage.getItem("jwtToken") as string : "" ;
   const router = useRouter();
   const validateForm = () => {
     if (
