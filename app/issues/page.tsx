@@ -108,7 +108,7 @@ const Issues = () => {
                         <div className="flex justify-between items-center py-4 px-8">
                             <h1 className="text-1.5xl font-semibold flex items-center gap-2">
                                 <GrLocation /> {user?.userlocation} -{' '}
-                                <span className="text-xl mt-1">{showableIssue.length}</span> Issues
+                                <span className="text-xl mt-1">{showableIssue?.length}</span> Issues
                             </h1>
                             <div className="flex gap-4">
                                 <Select
