@@ -17,7 +17,7 @@ import {
 } from "swiper/modules";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { BsGraphUp, BsPeople, BsSend, BsSendFill } from "react-icons/bs";
-import { BiDownvote, BiUpvote } from "react-icons/bi";
+import { BiDownvote, BiSolidDownvote, BiSolidUpvote, BiUpvote } from "react-icons/bi";
 import { AiOutlineThunderbolt } from "react-icons/ai";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import getUserById from "@/functions/user/getUserById";
@@ -28,6 +28,7 @@ import { updateIssue } from "@/functions/issueReport.tsx/updateIssue";
 import Moment from "react-moment";
 
 const Issue = ({ params }: any) => {
+  const [adminComment, setAdminComment] = useState<string>("");
   const issueId = params.issueId;
   const [issue, setIssue] = useState<Partial<IIssueData>>();
   const [loading, setLoading] = useState<boolean>(true);
@@ -47,11 +48,40 @@ const Issue = ({ params }: any) => {
       };
     });
   };
+  const handleAddAdminComment = async () => {
+    const commentData: ICommentData = {
+      body: adminComment,
+      commenttype: "officer",
+      username: user?.UserId as string,
+      commenttime: Date.now(),
+    };
+
+    await updateIssue(issue?._id as string, {
+      ...issue,
+      issuecomments: [...(issue?.issuecomments as ICommentData[]), commentData],
+    });
+    setIssue((prev: any) => {
+      return {
+        ...prev,
+        issuecomments: [
+          ...(prev?.issuecomments as ICommentData[]),
+          commentData,
+        ],
+      };
+    }
+    );
+    setAdminComment("");
+  };
 
   const handleAddVote = async () => {
     let _issueData = { ...issue, issuevote: [...issue?.issuevote as string[], user?.UserId as string] }
-    console.log("Issue data:",_issueData)
-    // await updateIssue(issue?._id as string,_issueData)
+     await updateIssue(issue?._id as string,_issueData)
+    setIssue((prev)=>{
+      return {
+        ...prev,
+        issuevote: [...issue?.issuevote as string[], user?.UserId as string]
+      }
+    })
     setIsLiked(true)
   }
 
@@ -123,7 +153,7 @@ const Issue = ({ params }: any) => {
                     </section>
                     <section className="flex justify-end gap-1 text-base items-center">
                       {
-                        isLiked ? <BiDownvote size={30} color="#002966" cursor={'pointer'} onClick={()=>setIsLiked(false)} /> : <BiUpvote size={30} color="#002966" cursor={'pointer'} className="hover:scale-105" onClick={handleAddVote} />
+                        isLiked ? <BiUpvote size={30} color="#002966" cursor={'pointer'} onClick={handleAddVote} /> : <BiSolidUpvote size={30} color="#002966" cursor={'pointer'} className="hover:scale-105" />
                       }
                       {issue?.issuevote?.length}
                     </section>
@@ -310,26 +340,23 @@ const Issue = ({ params }: any) => {
               })}
               <>
                 {
-                  user?.userrole !== "officer" && <div className="flex justify-start gap-2 items-center mb-2">
+                  user?.userrole === "officer" && <div className="flex justify-start gap-2 items-center mb-2">
                     <Avatar name={user?.username} size={'sm'} />
                     <Input
                       type="text"
                       backgroundColor={"#FBFAFF"}
                       focusBorderColor="#1A75FF"
-                      placeholder="Enter your Name"
+                      placeholder="Enter your message here"
                       size={"md"}
-                      // value={}
-                      // onChange={(e) =>
-                      //   setUserData((prev: any) => {
-                      //     return {
-                      //       ...prev,
-                      //       username: e.target.value,
-                      //     };
-                      //   })
-                      // }
+                      value={adminComment}
+                      onChange={(e) =>
+                        setAdminComment(e.target.value)
+                      }
                       fontSize="base"
                     />
-                    <button className="btn-primary">
+                    <button className="btn-primary" 
+                    onClick={handleAddAdminComment}
+                    >
                       <BsSendFill />
                     </button>
                   </div>
