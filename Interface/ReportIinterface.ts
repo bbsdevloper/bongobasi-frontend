@@ -13,7 +13,7 @@ export interface IIssueData {
     issuelevel: "low" | "moderate" | "severe"
     issuevote?:string[],
     issuemedia?: string[]
-    issuelocation: IIssueLocation;
+    issuelocation: IIssueLocation;  
     issuecomments?: ICommentData[]
     issuedate: string,
     issueraiserdetails: IIssueRaiserDetails;
