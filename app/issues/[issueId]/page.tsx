@@ -17,21 +17,22 @@ import {
 } from "swiper/modules";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { BsGraphUp, BsPeople, BsSend, BsSendFill } from "react-icons/bs";
+import { BiDownvote, BiUpvote } from "react-icons/bi";
 import { AiOutlineThunderbolt } from "react-icons/ai";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import getUserById from "@/functions/user/getUserById";
-import { Avatar, CircularProgress, Textarea } from "@chakra-ui/react";
+import { Avatar, CircularProgress, Input, Textarea } from "@chakra-ui/react";
 import Link from "next/link";
 import { useUser } from "@/context/userContext";
 import { updateIssue } from "@/functions/issueReport.tsx/updateIssue";
 import Moment from "react-moment";
-import Lottie from "react-lottie-player";
 
 const Issue = ({ params }: any) => {
   const issueId = params.issueId;
   const [issue, setIssue] = useState<Partial<IIssueData>>();
   const [loading, setLoading] = useState<boolean>(true);
   const [mySwiper, setMySwiper] = useState<any>();
+  const [isLiked, setIsLiked] = useState(false)
   const daysPassed: any =
     issue?.issuedate &&
     intervalToDuration({ start: parseInt(issue?.issuedate), end: Date.now() });
@@ -46,6 +47,13 @@ const Issue = ({ params }: any) => {
       };
     });
   };
+
+  const handleAddVote = async () => {
+    let _issueData = { ...issue, issuevote: [...issue?.issuevote as string[], user?.UserId as string] }
+    console.log("Issue data:",_issueData)
+    // await updateIssue(issue?._id as string,_issueData)
+    setIsLiked(true)
+  }
 
   useEffect(() => {
     handleGetSingleIssues();
@@ -93,26 +101,32 @@ const Issue = ({ params }: any) => {
           <h1>Loading please wait!</h1>
         </div>
       ) : (
-        <div className="min-h-screen bg-blueBackground">
+        <div className="min-h-screen bg-blueBackground pb-6">
           <Navbar />
-          <div className="grid grid-cols-4  min-h-[90vh] bg-white rounded-xl shadow-custom mx-8 my-8 divide-x-2 ">
+          <div className="grid grid-cols-4  min-h-[85vh] bg-white rounded-xl shadow-custom mx-8 my-8 divide-x-2 ">
             <div
-              className={`col-span-3  ${
-                issue?.issuelevel === "severe" && "border-t-red-500"
-              } ${issue?.issuelevel === "moderate" && "border-t-yellow-500"} ${
-                issue?.issuelevel === "low" && "border-t-blue-500"
-              } border-t-8`}
+              className={`col-span-3  ${issue?.issuelevel === "severe" && "border-t-red-500"
+                } ${issue?.issuelevel === "moderate" && "border-t-yellow-500"} ${issue?.issuelevel === "low" && "border-t-blue-500"
+                } border-t-8`}
             >
               <div className=" px-6 space-y-4 py-4 ">
                 <section>
                   <div className="flex justify-between items-center">
-                    <h1 className="text-2xl font-semibold">
-                      {issue?.issuetitle}
-                    </h1>
-                    <h1>
-                      {issue?.issuedate &&
-                        format(parseInt(issue?.issuedate), "PP")}
-                    </h1>
+                    <section className="flex justify-start items-center gap-2">
+                      <h1 className="text-2xl font-semibold">
+                        {issue?.issuetitle}
+                      </h1>
+                      <h1 className="text-lg">
+                        ({issue?.issuedate &&
+                          format(parseInt(issue?.issuedate), "PP")})
+                      </h1>
+                    </section>
+                    <section className="flex justify-end gap-1 text-base items-center">
+                      {
+                        isLiked ? <BiDownvote size={30} color="#002966" cursor={'pointer'} onClick={()=>setIsLiked(false)} /> : <BiUpvote size={30} color="#002966" cursor={'pointer'} className="hover:scale-105" onClick={handleAddVote} />
+                      }
+                      {issue?.issuevote?.length}
+                    </section>
                   </div>
                   <h1>Raised {daysPassed?.days} days ago</h1>
                 </section>
@@ -129,7 +143,7 @@ const Issue = ({ params }: any) => {
                     onInit={(ev: any) => setMySwiper(ev)}
                     grabCursor={true}
                     loop={true}
-                    slidesPerView={2}
+                    slidesPerView={1}
                     //pagination={true}
                     spaceBetween={2}
                     //navigation={true}
@@ -141,14 +155,14 @@ const Issue = ({ params }: any) => {
                       Pagination,
                       Navigation,
                       Autoplay,
-                      EffectCoverflow,
+
                     ]}
                     className=" mx-auto"
                   >
                     {issue?.issuemedia?.map((img, i) => {
                       return (
                         <SwiperSlide key={i}>
-                          <img src={img} alt="image" key={i} className="" />
+                          <img src={img} alt="image" key={i} className="w-[40vw] mx-auto" />
                         </SwiperSlide>
                       );
                     })}
@@ -167,13 +181,10 @@ const Issue = ({ params }: any) => {
                   <BsGraphUp color="#1A75FF" size={30} />
                   <span className="ml-2 mr-2 font-semibold">Progress:</span>
                   <span
-                    className={`${
-                      issue?.issueprogress === "started" && "text-yellow-600"
-                    } ${
-                      issue?.issueprogress === "not started" && "text-red-600"
-                    } ${
-                      issue?.issueprogress === "finished" && "text-green-600"
-                    } font-semibold`}
+                    className={`${issue?.issueprogress === "started" && "text-yellow-600"
+                      } ${issue?.issueprogress === "not started" && "text-red-600"
+                      } ${issue?.issueprogress === "finished" && "text-green-600"
+                      } font-semibold`}
                   >
                     {issue?.issueprogress}
                   </span>
@@ -268,7 +279,7 @@ const Issue = ({ params }: any) => {
               </div>
             </div>
 
-            <div>
+            <div className="overflow-y-auto max-h-[85vh] px-2 py-4">
               <h1 className=" text-center font-semibold text-2xl py-3 text-red-700">
                 Updates
               </h1>
@@ -297,6 +308,37 @@ const Issue = ({ params }: any) => {
                   </div>
                 );
               })}
+              <>
+                {
+                  user?.userrole !== "officer" && <div className="flex justify-start gap-2 items-center mb-2">
+                    <Avatar name={user?.username} size={'sm'} />
+                    <Input
+                      type="text"
+                      backgroundColor={"#FBFAFF"}
+                      focusBorderColor="#1A75FF"
+                      placeholder="Enter your Name"
+                      size={"md"}
+                      // value={}
+                      // onChange={(e) =>
+                      //   setUserData((prev: any) => {
+                      //     return {
+                      //       ...prev,
+                      //       username: e.target.value,
+                      //     };
+                      //   })
+                      // }
+                      fontSize="base"
+                    />
+                    <button className="btn-primary">
+                      <BsSendFill />
+                    </button>
+                  </div>
+                }
+              </>
+              <hr className="py-3" />
+              <div className="pl-2">
+
+              </div>
             </div>
           </div>
         </div>
