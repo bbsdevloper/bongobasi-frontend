@@ -1,7 +1,7 @@
 "use client";
 import Navbar from "@/components/Navbar";
 import { Input, Select } from "../lib/chakraui";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IUser } from "@/Interface/UserInterface";
 import { decodeJWT } from "@/functions/decodeJwt";
 import { createUser } from "@/functions/user/createUser";
@@ -20,7 +20,13 @@ const CreateProfile = () => {
     UserVerified: false,
     UserIdProof: "",
   });
-  const jwtToken = window !== undefined ?  window.sessionStorage.getItem("jwtToken") as string : "" ;
+  const [jwToken, setJWToken] = useState<string>("");
+  useEffect(() => {
+    if (window !== undefined) {
+      const _jwtToken = window.sessionStorage.getItem("jwtToken") as string;
+      setJWToken(_jwtToken);
+    }
+  }, [jwToken]);
   const router = useRouter();
   const validateForm = () => {
     if (
@@ -39,7 +45,7 @@ const CreateProfile = () => {
   };
 
   const handleCreateUser = async () => {
-    const phnNumber = decodeJWT(jwtToken);
+    const phnNumber = decodeJWT(jwToken);
     console.log(phnNumber);
     const data = {
       username: userData.username,
