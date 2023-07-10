@@ -16,6 +16,7 @@ const Navbar = () => {
   const [open, setOpen] = useState<boolean>(false);
   const { user } = useUser();
   const router = useRouter();
+  
   return (
     <div className="h-20 px-8 py-4 flex justify-between items-center text-blueDeep font-semibold bg-white shadow-lg">
       <Link href="/">
@@ -36,7 +37,7 @@ const Navbar = () => {
         <ul className="cursor-pointer hover:scale-105 transition-all duration-150">
           Help
         </ul>
-        {user ? (
+        {user?.UserId ? (
           <Menu>
             <MenuButton>
               <Avatar

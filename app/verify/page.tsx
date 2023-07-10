@@ -1,36 +1,73 @@
 "use client"
 import Navbar from '@/components/Navbar'
 import { useUser } from '@/context/userContext'
-import React from 'react'
+import { uploadImagetoAWS } from '@/functions/uploadImagetoAWS'
+import { useToast } from '@chakra-ui/react'
+import React, { useRef, useState } from 'react'
 
 
 
 const Verify = () => {
+    const fileInputRef = useRef(null)
+    const [selectedFile, setSelectedFile] = useState('')
+    const [fileUrl, setFileUrl] = useState('')
+    const toast = useToast()
 
-    const {user} = useUser()
+    const handleVerify = async () => {
+        // const _uploadedImage = await uploadImagetoAWS(selectedFile)
+        //update database
 
-  return (
-    <div>
-        <Navbar/>
-        <div className='flex justify-center items-center min-h-[70vh]'>
-            <div className='bg-white shadow-lg rounded-md w-full py-4 px-6'>
-                <h1 className='text-2xl font-semibold text-blueDeep mb-6'>Verify your account</h1>
-                <p className='text-lg'>Your account is not verified yet. Please verify your account to continue using the application.</p>
-                <div className='flex justify-center items-center mt-6'>
-                    <button className='btn-primary'>Verify Account</button>
-                </div>
+        //redirect
+        return toast({
+            title: 'Uploaded Successfully',
+            description: "Please hold your account is under review for.This might take 2-3 days",
+            status:'loading',
+            position:'top-right',
+            duration: 5000,
+            isClosable: true,
+          })
+    }
+
+    const addImagetoPost = (e: any) => {
+        const reader = new FileReader();
+        if (e.target.files[0]) {
+            reader.readAsDataURL(e.target.files[0]);
+        }
+
+        reader.onload = readerEvent => {
+            setFileUrl(readerEvent.target.result);
+        };
+    };
+
+    return (
+        <div className="min-h-screen bg-blueBackground">
+            <Navbar />
+            <div className='flex flex-col justify-center items-center min-h-[80vh] mt-8 mx-8 rounded-xl shadow-xl bg-white p-8'>
+                <h1 className='text-2xl font-semibold text-blueDeep mb-6 text-center'>Verify your account</h1>
+                <p className='text-lg text-center'>Your account is not verified yet. Please verify your account to continue using the application.</p>
+
                 {/* Upload a govt photo identity proof */}
-                <div className='flex justify-center items-center mt-6'>
-                    <button className='btn-primary'>Upload ID Proof</button>
+                {
+                    selectedFile ? <div><img src={fileUrl} className='w-[20rem]'/></div>
+                        : <div className='flex justify-center items-center mt-6' onClick={() => fileInputRef.current.click()}>
+                            <button className='btn-primary'>Upload ID Proof</button>
+                        </div>
+                }
+                <div className='flex justify-center items-center mt-6' >
+                    <button className='btn-primary' onClick={handleVerify}>Verify Account</button>
                 </div>
+                <input hidden type='file' ref={fileInputRef} onChange={(e: any) => {
+                    setSelectedFile(e.target.files[0])
+                    addImagetoPost(e)
+                }} />
 
 
             </div>
-            </div>
 
 
-    </div>
-  )
+
+        </div>
+    )
 }
 
 export default Verify

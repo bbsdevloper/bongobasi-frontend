@@ -69,16 +69,6 @@ const ReportIssuePage = () => {
     }
   };
 
-  const handleAddMediatoS3 = async () => {
-    let _uploadedMediaLink: string[] = [];
-    media?.forEach(async (img) => {
-      let _link = await uploadImagetoAWS(img);
-      _uploadedMediaLink.push(_link.img_url);
-    });
-    console.log(_uploadedMediaLink as string[]);
-    return _uploadedMediaLink;
-  };
-
   const handleSubmitReport = async () => {
     let _uploadedMediaLink: string[] = [];
 
