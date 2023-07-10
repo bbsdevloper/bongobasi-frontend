@@ -2,6 +2,7 @@
 import { IIssueData } from '@/Interface/ReportIinterface'
 import Navbar from '@/components/Navbar'
 import ReportIssueCard from '@/components/Problem/ReportIssueCard'
+import { useUser } from '@/context/userContext'
 import { fetchAllIssue } from '@/functions/issueReport.tsx/fetchAllIssue'
 import { CircularProgress, Select } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
@@ -92,7 +93,7 @@ const Issues = () => {
             setShowableIssue(issues)
         }
     }
-
+    const { user } = useUser()
     return (
         <>
             {loading ? (
@@ -106,7 +107,8 @@ const Issues = () => {
                     <div className="mx-12 ">
                         <div className="flex justify-between items-center py-4 px-8">
                             <h1 className="text-1.5xl font-semibold flex items-center gap-2">
-                                <GrLocation /> Kolkata - <span className="text-xl mt-1">12</span> Issues
+                                <GrLocation /> {user?.userlocation} -{' '}
+                                <span className="text-xl mt-1">{showableIssue.length}</span> Issues
                             </h1>
                             <div className="flex gap-4">
                                 <Select
