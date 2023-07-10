@@ -14,7 +14,7 @@ const EnterMobileNumber = ({
       if (mobileNumber) {
         const responseData = await sendOtp(mobileNumber);
         console.log(responseData);
-
+        // if(responseData?.code === "ERR_NETWORK")
         setVerificationData({
           VerificationResponse: responseData?.verificationResponse,
           ServiceResponseParam: responseData?.serviceResponseParam,
