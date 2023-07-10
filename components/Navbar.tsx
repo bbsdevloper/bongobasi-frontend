@@ -23,16 +23,15 @@ const Navbar = () => {
       </Link>
       <li className="flex justify-end items-center space-x-8">
         <ul className="cursor-pointer hover:scale-105 transition-all duration-150">
-          <Link href={"/"}>Home</Link>
+          <a href="/">Home</a>
         </ul>
         <ul className="cursor-pointer hover:scale-105 transition-all duration-150">
-          <Link href={"/issues"}>All Issues</Link>
+          <a href={"/issues"}>All Issues</a>
         </ul>
         <ul
           className="cursor-pointer hover:scale-105 transition-all duration-150"
-          onClick={() => router.push("/report-issue")}
         >
-          Issue Report
+          <a href="/report-issue">Report issue</a>
         </ul>
         <ul className="cursor-pointer hover:scale-105 transition-all duration-150">
           Help
