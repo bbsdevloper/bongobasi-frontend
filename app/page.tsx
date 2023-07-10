@@ -4,6 +4,7 @@ import IssueReportAll from '@/components/IssueReport/IssueReportAll'
 import IssueReportCard from '@/components/IssueReport/issueReport.Card'
 import Navbar from '@/components/Navbar'
 import ReportIssue from '@/components/reportIssue'
+import ViewIssue from '@/components/viewIssue'
 import { useUser } from '@/context/userContext'
 
 export default function Home() {
@@ -19,6 +20,7 @@ export default function Home() {
       <div className='px-24'>
         <IssueReportAll />
         <ReportIssue />
+        <ViewIssue/>
       </div>
     </div>
   )
