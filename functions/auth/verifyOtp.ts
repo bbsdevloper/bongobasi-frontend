@@ -4,7 +4,7 @@ import axios from "axios";
 export async function verifyOtp(mobileNumber: string, otp: string, VerificationResponse: string, ServiceResponseParam: string) {
     try {
         const res = await axios.post(`${baseUrl}/api/verifyOtp`, {
-            phone: `+91z${mobileNumber}`,
+            phone: `+91${mobileNumber}`,
             otp: otp,
             verificationResponse: VerificationResponse,
             serviceResponseParam: ServiceResponseParam
