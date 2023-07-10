@@ -6,8 +6,8 @@ export async function verifyOtp(mobileNumber: string, otp: string, VerificationR
         const res = await axios.post(`${baseUrl}/api/verifyOtp`, {
             phone: `+91${mobileNumber}`,
             otp: otp,
-            VerificationResponse,
-            ServiceResponseParam
+            verificationResponse: VerificationResponse,
+            serviceResponseParam: ServiceResponseParam
         });
 
         if (res.data.jwtToken) {
