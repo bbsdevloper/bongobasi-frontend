@@ -101,7 +101,7 @@ const CreateProfile = () => {
               focusBorderColor="#1A75FF"
               placeholder="--select--"
               size={"md"}
-              value={userData.username}
+              value={userData.userrole}
               onChange={(e) =>
                 setUserData((prev: any) => {
                   return {
