@@ -10,7 +10,7 @@ export async function checkUser(mobileNumber: string) {
         return res.data
     } catch (err: any) {
         console.log(err)
-        if (err.response.data === 'No documents found') {
+        if (err?.response?.data === 'No documents found') {
             return false
         }
     }

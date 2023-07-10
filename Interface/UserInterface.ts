@@ -9,4 +9,5 @@ export interface IUser {
     userage: number
     UserVerified?: boolean
     UserIdProof?: string
+    userrole:"citizen" | "officer"
 }

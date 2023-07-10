@@ -19,6 +19,7 @@ const CreateProfile = () => {
     userage: NaN,
     UserVerified: false,
     UserIdProof: "",
+    userrole:"citizen"
   });
   const [jwToken, setJWToken] = useState<string>("");
   useEffect(() => {
@@ -30,6 +31,7 @@ const CreateProfile = () => {
   const router = useRouter();
   const validateForm = () => {
     if (
+      userData.userrole === undefined || 
       userData.username === "" ||
       userData.useremail === "" ||
       userData.gender === "" ||
@@ -46,7 +48,6 @@ const CreateProfile = () => {
 
   const handleCreateUser = async () => {
     const phnNumber = decodeJWT(jwToken);
-    console.log(phnNumber);
     const data = {
       username: userData.username,
       useremail: userData.useremail,
@@ -60,7 +61,11 @@ const CreateProfile = () => {
     };
 
     await createUser(data);
-    router.push("/");
+    if(userData.userrole === "citizen") {
+      router.push('/')
+    }else{
+      router.push('/verify')
+    }
   };
 
   return (
@@ -88,6 +93,32 @@ const CreateProfile = () => {
               }
               fontSize="base"
             />
+          </section>
+          <section>
+            <h2 className="font-medium mb-2">Role</h2>
+            <Select
+              backgroundColor={"#FBFAFF"}
+              focusBorderColor="#1A75FF"
+              placeholder="--select--"
+              size={"md"}
+              value={userData.username}
+              onChange={(e) =>
+                setUserData((prev: any) => {
+                  return {
+                    ...prev,
+                    userrole: e.target.value,
+                  };
+                })
+              }
+              fontSize="base"
+            >
+              <option>
+                Citizen
+              </option>
+              <option>
+                Officer
+              </option>
+            </Select>
           </section>
           <section>
             <h2 className="font-medium mb-2">Email</h2>
