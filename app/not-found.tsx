@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import React from 'react'
 import {CgDanger} from 'react-icons/cg'
 
-const page = () => {
+const Page = () => {
   const router = useRouter()
   return (
     <div className='bg-blueBackground pb-6 min-h-screen'>
@@ -18,4 +18,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page
