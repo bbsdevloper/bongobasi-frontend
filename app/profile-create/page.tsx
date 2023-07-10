@@ -20,7 +20,7 @@ const CreateProfile = () => {
     UserVerified: false,
     UserIdProof: "",
   });
-  const jwtToken = window.sessionStorage.getItem("jwtToken") as string;
+  const jwtToken = window !== undefined ?  window.sessionStorage.getItem("jwtToken") as string : "" ;
   const router = useRouter();
   const validateForm = () => {
     if (
@@ -40,7 +40,7 @@ const CreateProfile = () => {
 
   const handleCreateUser = async () => {
     const phnNumber = decodeJWT(jwtToken);
-    console.log(phnNumber)
+    console.log(phnNumber);
     const data = {
       username: userData.username,
       useremail: userData.useremail,

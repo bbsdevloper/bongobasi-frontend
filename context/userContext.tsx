@@ -36,7 +36,7 @@ export function useUser() {
 export function UserContextProvider({ children }: any) {
   const [user, setUser] = useState<IUser | null>(defaultValues.user);
   const [jwtToken, setJwtToken] = useState<string>();
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const _jwtToken = window.sessionStorage.getItem("jwtToken") as string;
@@ -44,7 +44,7 @@ export function UserContextProvider({ children }: any) {
   }, []);
 
   const getUserData = useCallback(async () => {
-    setLoading(true);
+    setLoading(false);
     let mobileNumber = jwtToken && (decodeJWT(jwtToken) as string);
     if (jwtToken !== "") {
       const data = await checkUser(mobileNumber?.substring(3) as string);
