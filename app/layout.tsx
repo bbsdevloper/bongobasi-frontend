@@ -1,11 +1,8 @@
-'use client'
+
 import './globals.css'
 import { Inter, Merriweather, Nunito_Sans } from 'next/font/google'
 import { Providers } from './providers'
 import Head from 'next/head'
-import { useUser } from '@/context/userContext'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 const nunitoSans = Nunito_Sans({
