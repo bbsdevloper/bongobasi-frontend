@@ -20,7 +20,7 @@ import districtDivision from "@/data/districtDivision";
 import { AiOutlineClose } from "react-icons/ai";
 
 const ReportIssuePage = () => {
-  const [_selectedDistrictSubdivision, setSelectedSubDivisions] = useState([
+  const [_selectedDistrictSubdivision, setSelectedSubdivisions] = useState([
     "",
   ]);
   const { user } = useUser();
@@ -32,9 +32,9 @@ const ReportIssuePage = () => {
     issuelevel: "low",
     issuemedia: [],
     issuelocation: {
-      localAddress: "",
+      localaddress: "",
       district: "",
-      subDivision: "",
+      subdivision: "",
     },
     issuecomments: [],
     issuedate: Date.now().toString(),
@@ -108,7 +108,7 @@ const ReportIssuePage = () => {
       const districtIndex = districtDivision.findIndex(
         (data) => data.district === reportData.issuelocation?.district
       );
-      setSelectedSubDivisions(districtDivision[districtIndex].subdivisions);
+      setSelectedSubdivisions(districtDivision[districtIndex].subdivisions);
     }
   }, [reportData.issuelocation?.district]);
   const getPlaces = async (location: string) => {
@@ -264,13 +264,13 @@ const ReportIssuePage = () => {
                     placeholder="--select--"
                     focusBorderColor="#1A75FF"
                     size={"md"}
-                    value={reportData.issuelocation?.subDivision}
+                    value={reportData.issuelocation?.subdivision}
                     onChange={(e) => {
                       setReportData({
                         ...reportData,
                         issuelocation: {
                           ...(reportData.issuelocation as IIssueLocation),
-                          subDivision: e.target.value,
+                          subdivision: e.target.value,
                         },
                       });
                       getPlaces(e.target.value);
@@ -290,13 +290,13 @@ const ReportIssuePage = () => {
                   placeholder="Enter your location in details"
                   size={"md"}
                   fontSize="base"
-                  value={reportData.issuelocation?.localAddress}
+                  value={reportData.issuelocation?.localaddress}
                   onChange={(e) =>
                     setReportData({
                       ...reportData,
                       issuelocation: {
                         ...(reportData.issuelocation as IIssueLocation),
-                        localAddress: e.target.value,
+                        localaddress: e.target.value,
                       },
                     })
                   }

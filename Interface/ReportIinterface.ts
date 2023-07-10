@@ -2,6 +2,7 @@ export interface ICommentData {
     body: string,
     commenttype: "officer" | "citizen",
     username: string,
+    commenttime: number,
 }
 
 
@@ -20,9 +21,9 @@ export interface IIssueData {
 }
 
 export interface IIssueLocation{
-    localAddress:string,
+    localaddress:string,
     district:string,
-    subDivision:string,
+    subdivision:string,
 }
 
 export interface IIssueRaiserDetails{
