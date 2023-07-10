@@ -44,10 +44,10 @@ export function UserContextProvider({ children }: any) {
   }, []);
 
   const getUserData = useCallback(async () => {
-    setLoading(false);
+    
     let mobileNumber = jwtToken && (decodeJWT(jwtToken) as string);
     if (jwtToken !== "") {
-      const data = await checkUser(mobileNumber as string);
+      const data = await checkUser(mobileNumber?.substring(3) as string);
       setUser({ ...data, UserId: data._id });
     }
     setLoading(false);
