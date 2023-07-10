@@ -18,6 +18,8 @@ export interface IIssueData {
     issueraiserdetails: IIssueRaiserDetails;
     issueprogress?: string
     _id: string
+
+
 }
 
 export interface IIssueLocation{
