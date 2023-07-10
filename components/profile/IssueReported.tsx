@@ -10,8 +10,6 @@ const IssueReported = () => {
         getAllIssue()
     }, [])
 
-    console.log(issueAll);
-
 
     const getAllIssue = async () => {
         const data = await fetchAllIssue()

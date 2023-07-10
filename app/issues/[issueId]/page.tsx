@@ -49,7 +49,7 @@ const Issue = ({ params }: any) => {
 
   useEffect(() => {
     handleGetSingleIssues();
-  }, []);
+  }, [user]);
 
   const handleGetSingleIssues = async () => {
     setLoading(true);

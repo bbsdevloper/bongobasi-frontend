@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 
 'use client'
 import { IIssueData } from '@/Interface/ReportIinterface'
@@ -41,7 +42,7 @@ const Issue =( { params }: any)=> {
 
   const getAllData = async () => {
     await handleGetSingleIssues()
-    issue?.issueraiserid && await getIssueRaiser(issue?.issueraiserid)
+    issue?.issueraiserdetails?.issueraiserid && await getIssueRaiser(issue?.issueraiserdetails?.issueraiserid)
   }
 
   useEffect(() => {
@@ -104,10 +105,10 @@ const Issue =( { params }: any)=> {
           }}
           modules={[Pagination, Navigation, Autoplay, EffectCoverflow]}
           className=" mx-auto">
-          {issue?.issueimages?.map((img, i) => {
+          {issue?.issuemedia?.map((img:any, i:number) => {
             return (
 
-              <SwiperSlide>
+              <SwiperSlide key = {i}>
                 <img src={img} alt='image' key={i} className='' />
               </SwiperSlide>
             )
@@ -125,9 +126,9 @@ const Issue =( { params }: any)=> {
       <div className='flex justify-start items-center'>
         <span className='mr-3 font-semibold'>issue Raised by</span>
         <span className='flex justify-center items-center gap-2'>
-          <Avatar name={issue?.issueRaiserName} size={'sm'}/>
-          <Link href={`/profile/${issue?.issueraiserid}?currentTab=personalDetails`}>
-            <span className='anchor-custom'>{issue?.issueRaiserName}</span>
+          <Avatar name={issue?.issueraiserdetails?.issueraisername} size={'sm'}/>
+          <Link href={`/profile/${issue?.issueraiserdetails?.issueraiserid}?currentTab=personalDetails`}>
+            <span className='anchor-custom'>{issue?.issueraiserdetails?.issueraisername}</span>
           </Link>
         </span>
       </div>

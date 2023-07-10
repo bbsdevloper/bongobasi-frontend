@@ -3,20 +3,24 @@ import React, { useState } from "react";
 import { BsTelephone } from "react-icons/bs";
 import { sendOtp } from "@/functions/auth/sendOtp";
 
-const EnterMobileNumber = ({ setIsOtpPage, setVerificationData, mobileNumber, setMobileNumber }: any) => {
-
+const EnterMobileNumber = ({
+  setIsOtpPage,
+  setVerificationData,
+  mobileNumber,
+  setMobileNumber,
+}: any) => {
   const handleGetOtp = async () => {
     try {
       if (mobileNumber) {
-        const responseData = await sendOtp(mobileNumber)
+        const responseData = await sendOtp(mobileNumber);
         console.log(responseData);
 
         setVerificationData({
           VerificationResponse: responseData?.verificationResponse,
-          ServiceResponseParam: responseData?.serviceResponseParam
-        })
+          ServiceResponseParam: responseData?.serviceResponseParam,
+        });
       }
-      setIsOtpPage(true)
+      setIsOtpPage(true);
     } catch (err) {
       console.log(err);
     }
@@ -31,10 +35,9 @@ const EnterMobileNumber = ({ setIsOtpPage, setVerificationData, mobileNumber, se
         An OTP will be sent to your mobile number for verification
       </p>
       <InputGroup marginBottom={"10px"}>
-        <InputLeftAddon
-          pointerEvents="none"
-          children={<BsTelephone className="mt-4 mb-4" size={20} />}
-        />
+        <div className="p-3">
+          <BsTelephone size={20} />
+        </div>
         <Input
           type="number"
           backgroundColor={"#FBFAFF"}
