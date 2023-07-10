@@ -2,21 +2,25 @@
 import Navbar from '@/components/Navbar'
 import { useUser } from '@/context/userContext'
 import { uploadImagetoAWS } from '@/functions/uploadImagetoAWS'
+import { updateUser } from '@/functions/user/updateUserData'
 import { useToast } from '@chakra-ui/react'
 import React, { useRef, useState } from 'react'
 
 
 
 const Verify = () => {
-    const fileInputRef = useRef(null)
+    const fileInputRef = useRef<any>()
     const [selectedFile, setSelectedFile] = useState('')
     const [fileUrl, setFileUrl] = useState('')
     const toast = useToast()
+    const {user} = useUser()
 
     const handleVerify = async () => {
-        // const _uploadedImage = await uploadImagetoAWS(selectedFile)
+        const _uploadedImage = await uploadImagetoAWS(selectedFile)
         //update database
-
+        let _userData = {...user}
+        _userData.UserIdProof = _uploadedImage.img_url
+        await updateUser(_userData)
         //redirect
         return toast({
             title: 'Uploaded Successfully',
@@ -34,7 +38,7 @@ const Verify = () => {
             reader.readAsDataURL(e.target.files[0]);
         }
 
-        reader.onload = readerEvent => {
+        reader.onload = (readerEvent:any )=> {
             setFileUrl(readerEvent.target.result);
         };
     };
